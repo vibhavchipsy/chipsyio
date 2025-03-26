@@ -1,0 +1,232 @@
+<script>
+	function showDimmer() {
+			let dimmer = document.createElement("div");
+			dimmer.id = "scroll-dimmer-overlay";
+			dimmer.style.position = "fixed";
+			dimmer.style.top = "0";
+			dimmer.style.left = "0";
+			dimmer.style.width = "100%";
+			dimmer.style.height = "100%";
+			dimmer.style.background = "rgba(0, 0, 0, 0.3)"; // Light dim effect
+			dimmer.style.zIndex = "9999";
+			dimmer.style.transition = "opacity 0.3s ease-in-out";
+
+			// Apply blur effect to the whole page
+			document.body.style.filter = "blur(8px)";  // Adjust blur strength as needed
+
+			document.body.appendChild(dimmer);
+	}
+
+	function hideDimmer() {
+			let dimmer = document.getElementById("scroll-dimmer-overlay");
+			if (dimmer) {
+					dimmer.style.opacity = "0";
+					setTimeout(() => dimmer.remove(), 300); // Remove after fade-out
+			}
+
+			// Remove blur effect
+			document.body.style.filter = "none";
+	}
+	
+	if (window.location.href.includes("https://chipsy.io/mobile-app-development-and-design/")) {
+
+			const urlParams = new URLSearchParams(window.location.search);
+			const type = urlParams.get("type");
+
+			// Allowed types
+			const allowedTypes = ["android", "ios","crossPlatform","appModernization","mobileNativeDevelopment","mobileInterfaceDesign"];
+			if (!allowedTypes.includes(type)) {
+					console.log("Script stopped: Unsupported type in URL.");
+			} else {
+					runScript(type);
+			}
+
+			function runScript(type) {
+					const selectors = {
+							android: {
+								desktop: {
+									tabWrapperClass: "elementor-tabs-wrapper",
+									tabId: "elementor-tab-title-1792",
+									tabContentId: "elementor-tab-content-1792",
+									sectionClass: "androidSection",
+								},
+								mobile: {
+									accordionId: "accordionExample1a42db1",
+									sectionClass: "androidSection",
+									accordionNumber: 2,
+								},
+							},
+							ios: {
+								desktop: {
+									tabWrapperClass: "elementor-tabs-wrapper",
+									tabId: "elementor-tab-title-1792",
+									tabContentId: "elementor-tab-content-1792",
+									sectionClass: "iosSection",
+								},
+								mobile: {
+									accordionId: "accordionExample1a42db1",
+									sectionClass: "iosSection",
+									accordionNumber: 2,
+								},
+							},
+							crossPlatform: {
+								desktop: {
+									tabWrapperClass: "elementor-tabs-wrapper",
+									tabId: "elementor-tab-title-1793",
+									tabContentId: "elementor-tab-content-1793",
+									sectionClass: "crossPlatformSection",
+								},
+								mobile: {
+									accordionId: "accordionExample1a42db1",
+									sectionClass: "crossPlatformSection",
+									accordionNumber: 3
+								},
+							},
+							appModernization: {
+								desktop: {
+									tabWrapperClass: "elementor-tabs-wrapper",
+									tabId: "elementor-tab-title-1794",
+									tabContentId: "elementor-tab-content-1794",
+									sectionClass: "appModernizationSection",
+								},
+								mobile: {
+									accordionId: "accordionExample1a42db1",
+									sectionClass: "appModernizationSection",
+									accordionNumber: 4
+								},
+							},
+							mobileNativeDevelopment: {
+								desktop: {
+									tabWrapperClass: "elementor-tabs-wrapper",
+									tabId: "elementor-tab-title-1792",
+									tabContentId: "elementor-tab-content-1792",
+									sectionClass: "mobileNativeDevelopmentSection",
+								},
+								mobile: {
+									accordionId: "accordionExample1a42db1",
+									sectionClass: "mobileNativeDevelopmentSection",
+									accordionNumber: 2,
+								},
+							},
+							mobileInterfaceDesign: {
+								desktop: {
+									tabWrapperClass: "elementor-tabs-wrapper",
+									tabId: "elementor-tab-title-1791",
+									tabContentId: "elementor-tab-content-1791",
+									sectionClass: "mobileInterfaceDesignSection",
+								},
+								mobile: {
+									accordionId: "accordionExample1a42db1",
+									sectionClass: "mobileInterfaceDesignSection",
+									accordionNumber: 1
+								},
+							},
+					};
+
+					const isMobile = () => window.innerWidth <= 768; // Adjust if needed
+					const config = isMobile() ? selectors[type].mobile : selectors[type].desktop;
+
+					function scrollToElementWithOffset(element, offset = 100) {  
+							if (element) {
+									const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+									window.scrollTo({
+											top: elementPosition - offset,
+											behavior: "smooth"
+									});
+							}
+					}
+
+					function waitForElement(selector, callback, maxAttempts = 10, interval = 300) {
+							let attempts = 0;
+							const checkExist = setInterval(() => {
+									let element = document.querySelector(selector);
+									if (element) {
+											clearInterval(checkExist);
+											callback(element);
+									} else if (attempts >= maxAttempts) {
+											clearInterval(checkExist);
+											console.warn("Element not found:", selector);
+									}
+									attempts++;
+							}, interval);
+					}
+
+					function handleDesktop() {
+							waitForElement(`.${config.tabWrapperClass}`, (tabWrapper) => {
+									showDimmer(); 
+									scrollToElementWithOffset(tabWrapper, 185);
+
+									waitForElement(`#${config.tabId}`, (tab) => {
+											tab.click();
+											console.log("Tab clicked:", config.tabId);
+
+											setTimeout(() => {
+													scrollToFourthSection(config.sectionClass);
+											}, 500); // Small delay to ensure content is loaded
+									});
+									setTimeout(hideDimmer, 1000); // Remove dim effect after scrolling
+							});
+					}
+
+					function handleMobile() {
+							waitForElement(`#${config.accordionId}`, (accordion) => {
+									showDimmer(); 
+									scrollToElementWithOffset(accordion, 100);
+
+									setTimeout(() => {
+											let accordions = document.querySelectorAll(".single_accourdion.htmega-icon-align-right");
+
+											if (accordions.length === 0) {
+													console.warn("No accordions found!");
+													return;
+											}
+
+											if (accordions.length >= config.accordionNumber) {
+													let targetAccordion = accordions[config.accordionNumber - 1]; // Convert 1-based index to 0-based
+													console.log("Target Accordion:", targetAccordion);
+
+													let heading = targetAccordion.querySelector(".htmega-items-hedding");
+													let collapseDiv = targetAccordion.querySelector(".htb-collapse");
+
+													if (heading && collapseDiv) {
+															heading.classList.remove("htb-collapsed");
+															collapseDiv.classList.add("htb-show");
+
+															console.log("Accordion manually expanded:", targetAccordion);
+
+															setTimeout(() => {
+	// 																scrollToFourthSection(config.sectionClass);
+															}, 500);
+													} else {
+															console.warn("Accordion elements not found inside:", targetAccordion);
+													}
+											} else {
+													console.warn(`Not enough accordions found. Expected at least ${config.accordionNumber}, but found ${accordions.length}`);
+											}
+											setTimeout(hideDimmer, 1000); // Remove dim effect after scrolling
+									}, 500);
+							});
+					}
+
+					function scrollToFourthSection(sectionClass) {
+									let sections = document.querySelectorAll(`.${sectionClass}`);
+									if (sections.length >= 4) {
+											scrollToElementWithOffset(sections[3], 210);
+											console.log("Scrolled to 4th section of class:", sectionClass);
+										  setTimeout(hideDimmer, 1000); // Remove after scroll finishes
+									} else {
+											console.warn("Not enough sections found");
+									}
+					}
+
+					window.addEventListener("load", () => {
+						if (isMobile()) {
+							handleMobile();
+						} else {
+							handleDesktop();
+						}
+					});
+			}
+	}
+
+</script>
